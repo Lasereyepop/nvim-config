@@ -19,4 +19,4 @@ require("lazy").setup({ { import = "eric.plugins" }, { import = "eric.plugins.ls
   change_detection = {
     notify = false,
   },
-})
+})    
