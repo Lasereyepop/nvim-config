@@ -1,43 +1,36 @@
 return {
-  "folke/tokyonight.nvim",
+  "sainnhe/gruvbox-material",
   priority = 1000,
-  opts = {
-    -- 1. Use the darkest base style
-    style = "night", 
+  config = function()
+    -- Palette: "mix" (between material and original gruvbox)
+    vim.g.gruvbox_material_foreground = "mix"
 
-    -- 2. Flatten the UI (remove different background colors for sidebars/floats)
-    styles = {
-      sidebars = "transparent",
-      floats = "transparent",
-    },
+    -- Background contrast: "hard" (darkest variant)
+    vim.g.gruvbox_material_background = "hard"
 
-    -- 3. Force the background to be pure black (OLED style)
-    on_colors = function(colors)
-      colors.bg = "#000000"
-      colors.bg_dark = "#000000"
-      colors.bg_float = "#000000"
-      colors.bg_sidebar = "#000000"
-      colors.bg_popup = "#000000"
-      
-      -- Darken the comments so they aren't as bright
-      colors.comment = "#565f89" 
-    end,
+    -- Better performance
+    vim.g.gruvbox_material_better_performance = 1
 
-    -- 4. Minimalist Tweaks
-    on_highlights = function(hl, c)
-      -- Remove the background from the column where line numbers sit
-      hl.LineNr = { fg = c.dark3, bg = "NONE" }
-      hl.SignColumn = { bg = "NONE" }
-      
-      -- Hide the "~" characters at the end of the buffer
-      hl.EndOfBuffer = { fg = "#000000" }
-      
-      -- Make the vertical split line subtle
-      hl.WinSeparator = { fg = c.dark3 }
-    end,
-  },
-  config = function(_, opts)
-    require("tokyonight").setup(opts)
-    vim.cmd("colorscheme tokyonight")
+    vim.cmd("colorscheme gruvbox-material")
+
+    -- Translucency: set Normal bg to NONE so the terminal's own
+    -- background/opacity shows through. Enable transparency in your
+    -- terminal emulator (iTerm2 / Kitty / Alacritty / WezTerm) to see it.
+    local highlights = {
+      "Normal",
+      "NormalNC",
+      "NormalFloat",
+      "SignColumn",
+      "LineNr",
+      "FoldColumn",
+    }
+    for _, hl in ipairs(highlights) do
+      vim.api.nvim_set_hl(0, hl, { bg = "NONE", ctermbg = "NONE" })
+    end
+
+    -- Cursor: gruvbox-material orange accent
+    vim.api.nvim_set_hl(0, "Cursor", { fg = "#1d2021", bg = "#e78a4e" })
+    vim.api.nvim_set_hl(0, "CursorIM", { fg = "#1d2021", bg = "#e78a4e" })
+    vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor,r-cr:hor20-Cursor"
   end,
 }

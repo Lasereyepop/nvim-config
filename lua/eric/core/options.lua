@@ -29,6 +29,7 @@ vim.cmd([[
 opt.termguicolors = true
 opt.background = "dark"
 opt.signcolumn = "yes"
+opt.fillchars = { eob = " " } -- Replace ~ with blank at end of buffer
 
 -- Backspace
 opt.backspace = "indent,eol,start"
