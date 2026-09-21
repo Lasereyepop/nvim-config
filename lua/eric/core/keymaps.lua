@@ -6,6 +6,14 @@ keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 
 keymap.set("t", "jk", "<C-\\><C-n>", { desc = "Exit terminal mode with jk" })
 
+-- vim-tmux-navigator only maps C-hjkl in normal mode by default, so inside
+-- an nvim :terminal buffer they hit the shell (C-h = backspace, etc.)
+-- instead of navigating panes. Wire terminal mode to the same commands.
+keymap.set("t", "<C-h>", "<Cmd>TmuxNavigateLeft<CR>", { desc = "Tmux navigate left" })
+keymap.set("t", "<C-j>", "<Cmd>TmuxNavigateDown<CR>", { desc = "Tmux navigate down" })
+keymap.set("t", "<C-k>", "<Cmd>TmuxNavigateUp<CR>", { desc = "Tmux navigate up" })
+keymap.set("t", "<C-l>", "<Cmd>TmuxNavigateRight<CR>", { desc = "Tmux navigate right" })
+
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
 -- Increment/Decrement Numbers
