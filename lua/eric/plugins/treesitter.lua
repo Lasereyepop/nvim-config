@@ -1,53 +1,50 @@
 return {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
-    event = { "BufReadPre", "BufNewFile" },
+    branch = "main",
     build = ":TSUpdate",
+    lazy = false,
     config = function()
-        -- Import nvim-treesitter plugin
-        local treesitter = require("nvim-treesitter.configs")
+        local ensure_installed = {
+            -- The Big Three
+            "c",
+            "cpp",
+            "python",
+            "javascript",
+            "typescript",
+            "tsx", -- Essential for React/JSX
 
-        -- Configure treesitter
-        treesitter.setup({ -- Enable syntax highlighting
-            highlight = {
-                enable = true,
-            },
-            -- Enable indentation
-            indent = { enable = true },
-            -- Ensure these language parsers are installed
-            ensure_installed = {
-                -- The Big Three
-                "c",
-                "cpp",
-                "python",
-                "javascript",
-                "typescript",
-                "tsx", -- Essential for React/JSX
+            -- Web / Config
+            "html",
+            "css",
+            "json",
+            "yaml",
+            "bash",
+            "lua",
+            "vim",
+            "dockerfile",
+            "gitignore",
 
-                -- Web / Config
-                "html",
-                "css",
-                "json",
-                "yaml",
-                "bash",
-                "lua",
-                "vim",
-                "dockerfile",
-                "gitignore",
+            -- Documentation
+            "markdown",
+            "markdown_inline",
+        }
 
-                -- Documentation
-                "markdown",
-                "markdown_inline",
-            },
-            incremental_selection = {
-                enable = true,
-                keymaps = {
-                    init_selection = "<C-space>",
-                    node_incremental = "<C-space>",
-                    scope_incremental = false,
-                    node_decremental = "<bs>",
-                },
-            },
+        local installed = require("nvim-treesitter.config").get_installed()
+        local to_install = vim.iter(ensure_installed)
+            :filter(function(parser) return not vim.tbl_contains(installed, parser) end)
+            :totable()
+        if #to_install > 0 then
+            require("nvim-treesitter").install(to_install)
+        end
+
+        -- The old ensure_installed/highlight.enable/indent.enable API (and
+        -- incremental_selection) went away in the nvim-treesitter rewrite.
+        -- Highlighting + indent are now wired up per-buffer via core APIs.
+        vim.api.nvim_create_autocmd("FileType", {
+            callback = function()
+                pcall(vim.treesitter.start)
+                vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+            end,
         })
 
         -- Use bash parser for zsh files
