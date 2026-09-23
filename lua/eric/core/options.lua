@@ -52,10 +52,12 @@ opt.autoread = true
 --    This makes CursorHold events fire much faster.
 opt.updatetime = 250
 
--- 3. AUTO-SAVE when you leave the window (FocusLost)
---    This prevents the "File changed since opening" conflict.
---    It ensures the disk has your latest work before the AI edits it.
-vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave", "WinLeave" }, {
+-- 3. AUTO-SAVE when you leave Neovim entirely (FocusLost)
+--    This fires when you tab away to the AI pane in tmux, ensuring the
+--    disk has your latest work before the AI reads/edits it. We do NOT
+--    save on BufLeave/WinLeave: moving between splits inside nvim would
+--    otherwise trigger a blocking format_on_save on every switch.
+vim.api.nvim_create_autocmd({ "FocusLost" }, {
     callback = function()
         if vim.bo.modified and vim.fn.expand("%") ~= "" and vim.bo.buftype == "" then
             vim.cmd("silent! update")
